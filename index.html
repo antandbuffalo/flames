@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLAMES Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Flames</h1>
+        
+        <div class="search-box" id="search-container">
+            <input type="text" id="name1" placeholder="Enter first name">
+            <input type="text" id="name2" placeholder="Enter second name">
+            <div class="button-container">
+                <button class="flames-btn" onclick="calculateFlames()">FLAMES</button>
+            </div>
+        </div>
+
+        <div id="animation-container" class="animation-area" style="display: none;">
+            <div class="names-display">
+                <div class="name-row">
+                    <span class="name-label">Name 1:</span>
+                    <div id="animated-name1" class="animated-name"></div>
+                </div>
+                <div class="name-row">
+                    <span class="name-label">Name 2:</span>
+                    <div id="animated-name2" class="animated-name"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result"></div>
+        <div id="steps"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
