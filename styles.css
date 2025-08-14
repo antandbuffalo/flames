@@ -5,13 +5,13 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', Arial, sans-serif;
     background: #fff;
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 20px;
+    align-items: flex-start;
+    padding: 40px 20px 20px;
     /* Improve mobile touch scrolling */
     -webkit-overflow-scrolling: touch;
     /* Prevent horizontal scroll on mobile */
@@ -71,7 +71,7 @@ input[type="text"]::placeholder {
 }
 
 .flames-btn {
-    background: linear-gradient(45deg, #d32f2f, #f57c00, #8d6e63, #388e3c, #1976d2, #7b1fa2);
+    background: #6b5b73;
     border: none;
     border-radius: 24px;
     color: #ffffff;
@@ -84,26 +84,26 @@ input[type="text"]::placeholder {
     padding: 0 24px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     margin: 11px 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(107, 91, 115, 0.2);
 }
 
 .flames-btn:hover {
-    background: linear-gradient(45deg, #b71c1c, #e65100, #5d4037, #2e7d32, #1565c0, #4a148c);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: #5a4a62;
+    box-shadow: 0 4px 16px rgba(107, 91, 115, 0.3);
     transform: translateY(-2px);
 }
 
 .flames-btn:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 91, 115, 0.3), 0 2px 8px rgba(107, 91, 115, 0.2);
 }
 
 /* Mobile touch improvements */
 .flames-btn:active {
     transform: translateY(0px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(107, 91, 115, 0.2);
 }
 
 /* Improve touch targets for mobile */
@@ -200,7 +200,7 @@ input[type="text"]::placeholder {
 
 .step p {
     color: #5f6368;
-    font-family: 'Courier New', monospace;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
     font-size: 13px;
     line-height: 1.4;
 }
@@ -213,7 +213,14 @@ input[type="text"]::placeholder {
 /* Animation Styles */
 .animation-area {
     margin-top: 40px;
-    transition: all 0.5s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+}
+
+.animation-area.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .names-display {
@@ -236,7 +243,7 @@ input[type="text"]::placeholder {
 }
 
 .animated-name {
-    font-family: 'Courier New', monospace;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
     font-size: 20px;
     letter-spacing: 2px;
     text-align: center;
@@ -313,6 +320,81 @@ input[type="text"]::placeholder {
     will-change: transform, background-color, box-shadow;
 }
 
+/* Floating Hearts Background */
+.floating-hearts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.heart {
+    position: absolute;
+    color: rgba(198, 128, 157, 0.6);
+    font-size: 14px;
+    animation: floatUp 15s linear forwards;
+    pointer-events: none;
+}
+
+.heart:nth-child(2n) {
+    animation-duration: 15s;
+    color: rgba(186, 104, 136, 0.5);
+    font-size: 12px;
+}
+
+.heart:nth-child(3n) {
+    animation-duration: 15s;
+    color: rgba(167, 88, 118, 0.4);
+    font-size: 16px;
+}
+
+@keyframes floatUp {
+    0% {
+        bottom: -100px;
+        transform: translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.1;
+    }
+    20% {
+        opacity: 0.3;
+    }
+    30% {
+        opacity: 0.6;
+    }
+    40% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.8;
+    }
+    80% {
+        opacity: 0.6;
+    }
+    85% {
+        opacity: 0.4;
+    }
+    90% {
+        opacity: 0.2;
+    }
+    95% {
+        opacity: 0.1;
+    }
+    100% {
+        bottom: 120vh;
+        transform: translateX(-20px) rotate(10deg);
+        opacity: 0;
+    }
+}
+
 /* Reduce animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .letter, .flames-letter {
@@ -326,6 +408,12 @@ input[type="text"]::placeholder {
     
     .animation-area {
         transition: none !important;
+    }
+    
+    .floating-hearts,
+    .heart {
+        animation: none !important;
+        display: none !important;
     }
     
     @keyframes strikeAnimation {

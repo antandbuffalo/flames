@@ -30,21 +30,29 @@ function startAnimationSequence(originalName1, originalName2, name1, name2) {
     const searchContainer = document.getElementById('search-container');
     const animationContainer = document.getElementById('animation-container');
     
+    // Initialize names display with original case first
+    setupNamesForAnimation(originalName1, originalName2);
+    
+    // Show animation container immediately but invisible
+    animationContainer.style.display = 'block';
+    
+    // Start hiding search container
     searchContainer.classList.add('search-container-hidden');
     
-    // Show animation area after hiding inputs
+    // After search container starts fading, begin showing animation area
+    setTimeout(() => {
+        animationContainer.classList.add('show');
+    }, 200);
+    
+    // Hide search container completely after its transition
     setTimeout(() => {
         searchContainer.style.display = 'none';
-        animationContainer.style.display = 'block';
-        
-        // Initialize names display with original case
-        setupNamesForAnimation(originalName1, originalName2);
-        
-        // Start the striking animation with lowercase for algorithm
-        setTimeout(() => {
-            animateStrikingLetters(originalName1, originalName2, name1, name2);
-        }, 500);
     }, 500);
+    
+    // Start the striking animation after smooth transition is well underway
+    setTimeout(() => {
+        animateStrikingLetters(originalName1, originalName2, name1, name2);
+    }, 800);
 }
 
 function setupNamesForAnimation(originalName1, originalName2) {
@@ -337,12 +345,21 @@ function resetGame() {
         </div>
     `;
     
-    // Show search container again
+    // Hide animation container with smooth transition
     const searchContainer = document.getElementById('search-container');
     
-    animationContainer.style.display = 'none';
-    searchContainer.style.display = 'block';
-    searchContainer.classList.remove('search-container-hidden');
+    animationContainer.classList.remove('show');
+    
+    // Show search container again after animation starts hiding
+    setTimeout(() => {
+        searchContainer.style.display = 'block';
+        searchContainer.classList.remove('search-container-hidden');
+    }, 100);
+    
+    // Hide animation container completely after transition
+    setTimeout(() => {
+        animationContainer.style.display = 'none';
+    }, 600);
 }
 
 // Allow Enter key to calculate
@@ -351,3 +368,49 @@ document.addEventListener('keypress', function(e) {
         calculateFlames();
     }
 });
+
+// Floating Hearts Background Animation
+function createFloatingHeart() {
+    const heartsContainer = document.getElementById('floating-hearts');
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerHTML = '♥';
+    
+    // Random horizontal position
+    heart.style.left = Math.random() * 100 + '%';
+    
+    // Remove random delay to prevent sudden appearances
+    // heart.style.animationDelay = Math.random() * 2 + 's';
+    
+    heartsContainer.appendChild(heart);
+    
+    // Remove heart after animation completes naturally
+    heart.addEventListener('animationend', () => {
+        if (heart.parentNode) {
+            heart.parentNode.removeChild(heart);
+        }
+    });
+    
+    // Fallback cleanup in case animation event doesn't fire
+    setTimeout(() => {
+        if (heart.parentNode) {
+            heart.parentNode.removeChild(heart);
+        }
+    }, 18000); // Matches animation duration (15s + buffer)
+}
+
+// Create hearts at intervals
+function startFloatingHearts() {
+    // Create initial hearts spread out over time for immediate visual
+    for (let i = 0; i < 6; i++) {
+        setTimeout(() => createFloatingHeart(), i * 800);
+    }
+    
+    // Continue creating hearts for continuous flow
+    setInterval(() => {
+        createFloatingHeart(); // Always create a heart for continuous flow
+    }, 1800); // Every 1.8 seconds for more visible hearts
+}
+
+// Start the floating hearts when page loads
+document.addEventListener('DOMContentLoaded', startFloatingHearts);
