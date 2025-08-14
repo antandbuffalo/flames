@@ -297,7 +297,7 @@ function showFinalResult(letter, originalName1, originalName2) {
     // Add reset button below the result
     setTimeout(() => {
         const resetButton = document.createElement('button');
-        resetButton.textContent = 'Calculate Again';
+        resetButton.textContent = 'FLAMES Again';
         resetButton.className = 'flames-btn';
         resetButton.style.marginTop = '30px';
         resetButton.style.display = 'block';
@@ -329,11 +329,9 @@ function resetGame() {
     animationContainer.innerHTML = `
         <div class="names-display">
             <div class="name-row">
-                <span class="name-label">Name 1:</span>
                 <div id="animated-name1" class="animated-name"></div>
             </div>
             <div class="name-row">
-                <span class="name-label">Name 2:</span>
                 <div id="animated-name2" class="animated-name"></div>
             </div>
         </div>
