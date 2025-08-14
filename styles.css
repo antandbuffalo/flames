@@ -26,14 +26,63 @@ body {
 
 h1 {
     font-size: 96px;
-    font-weight: 400;
-    background: linear-gradient(45deg, #d32f2f, #f57c00, #8d6e63, #388e3c, #1976d2, #7b1fa2);
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 25%, #6bcf7f 50%, #4d9de0 75%, #bb6bd9 100%);
+    background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 30px;
-    letter-spacing: -5px;
+    margin-bottom: 40px;
+    letter-spacing: -3px;
     text-align: center;
+    position: relative;
+    animation: titleGradient 15s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    text-transform: uppercase;
+    font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', Arial, sans-serif;
+}
+
+h1::before {
+    content: 'Flames';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 217, 61, 0.1) 25%, rgba(107, 207, 127, 0.1) 50%, rgba(77, 157, 224, 0.1) 75%, rgba(187, 107, 217, 0.1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    z-index: -1;
+    transform: translateY(2px);
+    filter: blur(1px);
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ff6b6b, #ffd93d, #6bcf7f, #4d9de0, #bb6bd9, transparent);
+    border-radius: 2px;
+    animation: titleGradient 15s ease-in-out infinite;
+}
+
+@keyframes titleGradient {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 100% 25%;
+    }
+    50% {
+        background-position: 200% 50%;
+    }
+    75% {
+        background-position: 300% 75%;
+    }
 }
 
 .search-box {
@@ -71,39 +120,97 @@ input[type="text"]::placeholder {
 }
 
 .flames-btn {
-    background: #6b5b73;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
     border: none;
-    border-radius: 24px;
+    border-radius: 30px;
     color: #ffffff;
     font-family: inherit;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     height: 48px;
     line-height: 46px;
     min-width: 160px;
-    padding: 0 24px;
+    padding: 12px 24px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     margin: 11px 4px;
-    box-shadow: 0 2px 8px rgba(107, 91, 115, 0.2);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
 .flames-btn:hover {
-    background: #5a4a62;
-    box-shadow: 0 4px 16px rgba(107, 91, 115, 0.3);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
+    box-shadow: 0 12px 30px rgba(255, 107, 107, 0.4);
+    transform: translateY(-3px);
 }
 
 .flames-btn:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(107, 91, 115, 0.3), 0 2px 8px rgba(107, 91, 115, 0.2);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3), 0 8px 20px rgba(255, 107, 107, 0.3);
 }
 
 /* Mobile touch improvements */
 .flames-btn:active {
-    transform: translateY(0px);
-    box-shadow: 0 2px 8px rgba(107, 91, 115, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);
+}
+
+.flames-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.flames-btn:hover::before {
+    left: 100%;
+}
+
+/* Reset Button Special Styling */
+.reset-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 30px;
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.reset-btn:hover {
+    background: linear-gradient(135deg, #218838 0%, #1abc95 100%);
+    box-shadow: 0 12px 30px rgba(40, 167, 69, 0.4);
+    transform: translateY(-3px);
+}
+
+.reset-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+}
+
+.reset-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.reset-btn:hover::before {
+    left: 100%;
 }
 
 /* Improve touch targets for mobile */
@@ -120,56 +227,157 @@ input[type="text"]::placeholder {
 
 .result {
     margin-top: 40px;
-    padding: 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: 30px;
+    border-radius: 20px;
+    transition: all 0.5s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.result::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b, #eb4d4b, #6c5ce7);
+    background-size: 400% 400%;
+    border-radius: 22px;
+    z-index: -2;
+    animation: gradientShift 3s ease infinite;
+}
+
+.result::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    border-radius: 20px;
+    z-index: -1;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .result.friend { 
-    background: #e8f5e8; 
-    color: #137333; 
-    border: 1px solid #c6e5c6;
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4f1d4 100%); 
+    color: #0f5a2c; 
+    border: 2px solid #a8d8a8;
 }
 
 .result.love { 
-    background: #fce8e6; 
-    color: #d33b01; 
-    border: 1px solid #f4b2a6;
+    background: linear-gradient(135deg, #fce8e6 0%, #fdd6d1 100%); 
+    color: #b91c00; 
+    border: 2px solid #f19a88;
 }
 
 .result.affection { 
-    background: #f3e8fd; 
-    color: #8e24aa; 
-    border: 1px solid #d7aefb;
+    background: linear-gradient(135deg, #f3e8fd 0%, #e8d6fc 100%); 
+    color: #6a1b8c; 
+    border: 2px solid #c292f7;
 }
 
 .result.marriage { 
-    background: #fff3cd; 
-    color: #856404; 
-    border: 1px solid #ffeaa7;
+    background: linear-gradient(135deg, #fff3cd 0%, #fff0b8 100%); 
+    color: #6b5003; 
+    border: 2px solid #ffd93d;
 }
 
 .result.enemy { 
-    background: #f8d7da; 
-    color: #721c24; 
-    border: 1px solid #f1b0b7;
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%); 
+    color: #5a161c; 
+    border: 2px solid #ed969e;
 }
 
 .result.sister { 
-    background: #e7f3ff; 
-    color: #0d47a1; 
-    border: 1px solid #bbdefb;
+    background: linear-gradient(135deg, #e7f3ff 0%, #d1e7ff 100%); 
+    color: #0a3d91; 
+    border: 2px solid #90caf9;
 }
 
 .result h2 {
-    font-size: 24px;
-    font-weight: 400;
-    margin-bottom: 8px;
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+    position: relative;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result h2::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: currentColor;
+    margin: 10px auto;
+    border-radius: 2px;
+    opacity: 0.6;
 }
 
 .result p {
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.result-icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.result-names {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.result-name {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
     font-size: 16px;
-    font-weight: 300;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-transform: capitalize;
+}
+
+.result-connector {
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0.7;
+    margin: 0 4px;
 }
 
 .steps {
@@ -224,10 +432,34 @@ input[type="text"]::placeholder {
 }
 
 .names-display {
-    background: #f8f9fa;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
     padding: 30px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.names-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
 .name-row {
@@ -251,14 +483,23 @@ input[type="text"]::placeholder {
 
 .letter {
     display: inline-block;
-    padding: 4px 6px;
-    margin: 2px;
-    border-radius: 6px;
-    background: #e3f2fd;
-    border: 2px solid #bbdefb;
-    color: #1565c0;
+    padding: 8px 12px;
+    margin: 4px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #90caf9;
+    color: #0d47a1;
     transition: all 0.5s ease;
     position: relative;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+    transform: translateY(0);
+}
+
+.letter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(33, 150, 243, 0.3);
 }
 
 .letter.striking,
@@ -574,9 +815,30 @@ input[type="text"]::placeholder {
     .friend-star,
     .affection-sparkle,
     .storm-cloud,
-    .family-heart {
+    .family-heart,
+    .result-icon,
+    .names-display::before,
+    .reset-btn::before,
+    .flames-btn::before,
+    h1,
+    h1::after {
         animation: none !important;
+    }
+    
+    .floating-hearts,
+    .heart,
+    .celebration-container,
+    .heart-confetti,
+    .wedding-bell,
+    .friend-star,
+    .affection-sparkle,
+    .storm-cloud,
+    .family-heart {
         display: none !important;
+    }
+    
+    .result::before {
+        animation: none !important;
     }
     
     @keyframes strikeAnimation {
@@ -608,8 +870,13 @@ input[type="text"]::placeholder {
 
     h1 {
         font-size: 64px;
-        margin-bottom: 25px;
-        letter-spacing: -3px;
+        margin-bottom: 30px;
+        letter-spacing: -2px;
+    }
+    
+    h1::after {
+        width: 100px;
+        height: 3px;
     }
     
     input[type="text"] {
@@ -667,8 +934,13 @@ input[type="text"]::placeholder {
 
     h1 {
         font-size: 48px;
-        margin-bottom: 20px;
-        letter-spacing: -2px;
+        margin-bottom: 25px;
+        letter-spacing: -1px;
+    }
+    
+    h1::after {
+        width: 80px;
+        height: 3px;
     }
     
     input[type="text"] {
@@ -750,6 +1022,11 @@ input[type="text"]::placeholder {
     h1 {
         font-size: 40px;
         letter-spacing: -1px;
+    }
+    
+    h1::after {
+        width: 70px;
+        height: 2px;
     }
 
     input[type="text"] {

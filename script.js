@@ -295,9 +295,28 @@ function showFinalResult(letter, originalName1, originalName2) {
     
     // Show final result immediately
     const resultDiv = document.getElementById('result');
+    
+    // Get result icon
+    const resultIcons = {
+        'Friend': '🤝',
+        'Love': '💕',
+        'Affection': '💖',
+        'Marriage': '💒',
+        'Enemy': '⚡',
+        'Sister': '👨‍👩‍👧‍👦'
+    };
+    
+    const resultIcon = resultIcons[relationship.name] || '✨';
+    
     resultDiv.innerHTML = `
         <div class="result ${relationship.name.toLowerCase()}">
+            <div class="result-icon">${resultIcon}</div>
             <h2>${relationship.name}</h2>
+            <div class="result-names">
+                <span class="result-name">${originalName1}</span>
+                <span class="result-connector">&</span>
+                <span class="result-name">${originalName2}</span>
+            </div>
             <p>${relationship.message}</p>
         </div>
     `;
@@ -311,8 +330,8 @@ function showFinalResult(letter, originalName1, originalName2) {
     // Add reset button below the result
     setTimeout(() => {
         const resetButton = document.createElement('button');
-        resetButton.textContent = 'FLAMES Again';
-        resetButton.className = 'flames-btn';
+        resetButton.innerHTML = 'Try Another Pair';
+        resetButton.className = 'flames-btn reset-btn';
         resetButton.style.marginTop = '30px';
         resetButton.style.display = 'block';
         resetButton.style.marginLeft = 'auto';
