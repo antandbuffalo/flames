@@ -395,6 +395,162 @@ input[type="text"]::placeholder {
     }
 }
 
+/* Result Celebration Animations */
+.celebration-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+/* Love - Heart Confetti */
+.heart-confetti {
+    position: absolute;
+    color: #e91e63;
+    font-size: 18px;
+    animation: heartConfetti 6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes heartConfetti {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    90% {
+        transform: translateY(100vh) rotate(360deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Marriage - Wedding Bells */
+.wedding-bell {
+    position: absolute;
+    color: #ffd700;
+    font-size: 24px;
+    animation: weddingBell 7s ease-in-out forwards;
+    pointer-events: none;
+}
+
+@keyframes weddingBell {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    90% {
+        transform: translateY(100vh) rotate(180deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(180deg) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Friend - Cheerful Stars */
+.friend-star {
+    position: absolute;
+    color: #4caf50;
+    font-size: 16px;
+    animation: friendStar 5s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes friendStar {
+    0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    90% {
+        transform: translateY(100vh) scale(1) rotate(360deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) scale(1) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Affection - Gentle Sparkles */
+.affection-sparkle {
+    position: absolute;
+    color: #9c27b0;
+    font-size: 12px;
+    animation: affectionSparkle 6s ease-in-out forwards;
+    pointer-events: none;
+}
+
+@keyframes affectionSparkle {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    90% {
+        transform: translateY(100vh) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Enemy - Playful Storm Clouds */
+.storm-cloud {
+    position: absolute;
+    color: #607d8b;
+    font-size: 20px;
+    animation: stormCloud 5.5s ease-in-out forwards;
+    pointer-events: none;
+}
+
+@keyframes stormCloud {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 1;
+    }
+    90% {
+        transform: translateY(100vh) translateX(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) translateX(0) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Sister - Family Hearts */
+.family-heart {
+    position: absolute;
+    color: #ff9800;
+    font-size: 14px;
+    animation: familyHeart 6.5s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes familyHeart {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    90% {
+        transform: translateY(100vh) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) scale(1);
+        opacity: 0;
+    }
+}
+
 /* Reduce animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .letter, .flames-letter {
@@ -411,7 +567,14 @@ input[type="text"]::placeholder {
     }
     
     .floating-hearts,
-    .heart {
+    .heart,
+    .celebration-container,
+    .heart-confetti,
+    .wedding-bell,
+    .friend-star,
+    .affection-sparkle,
+    .storm-cloud,
+    .family-heart {
         animation: none !important;
         display: none !important;
     }

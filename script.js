@@ -302,6 +302,12 @@ function showFinalResult(letter, originalName1, originalName2) {
         </div>
     `;
     
+    // Stop floating hearts and trigger celebration animation
+    setTimeout(() => {
+        stopFloatingHearts();
+        triggerCelebration(relationship.name);
+    }, 500);
+    
     // Add reset button below the result
     setTimeout(() => {
         const resetButton = document.createElement('button');
@@ -326,6 +332,9 @@ function resetGame() {
     
     // Clear displays
     document.getElementById('result').innerHTML = '';
+    
+    // Clear celebrations
+    document.getElementById('celebration-container').innerHTML = '';
     
     // Clear animation container and remove any remaining counter
     const animationContainer = document.getElementById('animation-container');
@@ -359,6 +368,8 @@ function resetGame() {
     // Hide animation container completely after transition
     setTimeout(() => {
         animationContainer.style.display = 'none';
+        // Restart floating hearts
+        startFloatingHearts();
     }, 600);
 }
 
@@ -407,10 +418,174 @@ function startFloatingHearts() {
     }
     
     // Continue creating hearts for continuous flow
-    setInterval(() => {
+    heartInterval = setInterval(() => {
         createFloatingHeart(); // Always create a heart for continuous flow
     }, 1800); // Every 1.8 seconds for more visible hearts
 }
 
 // Start the floating hearts when page loads
+let heartInterval;
 document.addEventListener('DOMContentLoaded', startFloatingHearts);
+
+function stopFloatingHearts() {
+    // Clear the interval to stop new hearts
+    if (heartInterval) {
+        clearInterval(heartInterval);
+    }
+    
+    // Fade out existing hearts quickly
+    const existingHearts = document.querySelectorAll('.heart');
+    existingHearts.forEach(heart => {
+        heart.style.transition = 'opacity 0.5s ease-out';
+        heart.style.opacity = '0';
+        setTimeout(() => {
+            if (heart.parentNode) {
+                heart.parentNode.removeChild(heart);
+            }
+        }, 500);
+    });
+}
+
+// Result Celebration Functions
+function createCelebrationElement(className, icon, x, y) {
+    const element = document.createElement('div');
+    element.className = className;
+    element.innerHTML = icon;
+    element.style.left = x + '%';
+    element.style.top = y + '%';
+    return element;
+}
+
+function triggerCelebration(resultType) {
+    const container = document.getElementById('celebration-container');
+    // Clear any existing celebrations
+    container.innerHTML = '';
+    
+    switch(resultType) {
+        case 'Love':
+            createLoveCelebration(container);
+            break;
+        case 'Marriage':
+            createMarriageCelebration(container);
+            break;
+        case 'Friend':
+            createFriendCelebration(container);
+            break;
+        case 'Affection':
+            createAffectionCelebration(container);
+            break;
+        case 'Enemy':
+            createEnemyCelebration(container);
+            break;
+        case 'Sister':
+            createSisterCelebration(container);
+            break;
+    }
+    
+    // Clean up after animations complete
+    setTimeout(() => {
+        container.innerHTML = '';
+    }, 8000);
+}
+
+function createLoveCelebration(container) {
+    // Heart confetti pouring from top
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const heart = createCelebrationElement('heart-confetti', '💕', 
+                Math.random() * 100, -10);
+            heart.style.animationDelay = Math.random() * 0.5 + 's';
+            container.appendChild(heart);
+            
+            // Remove after animation
+            setTimeout(() => {
+                if (heart.parentNode) heart.parentNode.removeChild(heart);
+            }, 6000);
+        }, i * 80);
+    }
+}
+
+function createMarriageCelebration(container) {
+    // Wedding bells and golden sparkles pouring from top
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            const icon = i % 3 === 0 ? '🔔' : '✨';
+            const bell = createCelebrationElement('wedding-bell', icon, 
+                Math.random() * 100, -10);
+            bell.style.animationDelay = Math.random() * 0.3 + 's';
+            container.appendChild(bell);
+            
+            setTimeout(() => {
+                if (bell.parentNode) bell.parentNode.removeChild(bell);
+            }, 7000);
+        }, i * 150);
+    }
+}
+
+function createFriendCelebration(container) {
+    // Cheerful stars and emojis pouring from top
+    for (let i = 0; i < 18; i++) {
+        setTimeout(() => {
+            const icons = ['⭐', '🌟', '😊', '🎉'];
+            const star = createCelebrationElement('friend-star', icons[i % 4], 
+                Math.random() * 100, -10);
+            star.style.animationDelay = Math.random() * 0.5 + 's';
+            container.appendChild(star);
+            
+            setTimeout(() => {
+                if (star.parentNode) star.parentNode.removeChild(star);
+            }, 5000);
+        }, i * 120);
+    }
+}
+
+function createAffectionCelebration(container) {
+    // Gentle sparkles and hearts pouring from top
+    for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+            const icons = ['✨', '💫', '💜', '🌸'];
+            const sparkle = createCelebrationElement('affection-sparkle', icons[i % 4], 
+                Math.random() * 100, -10);
+            sparkle.style.animationDelay = Math.random() * 1 + 's';
+            container.appendChild(sparkle);
+            
+            setTimeout(() => {
+                if (sparkle.parentNode) sparkle.parentNode.removeChild(sparkle);
+            }, 6000);
+        }, i * 90);
+    }
+}
+
+function createEnemyCelebration(container) {
+    // Playful storm clouds and lightning pouring from top (cute, not scary)
+    for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+            const icons = ['⛅', '🌩️', '⚡', '🌦️'];
+            const cloud = createCelebrationElement('storm-cloud', icons[i % 4], 
+                Math.random() * 100, -10);
+            cloud.style.animationDelay = Math.random() * 0.5 + 's';
+            container.appendChild(cloud);
+            
+            setTimeout(() => {
+                if (cloud.parentNode) cloud.parentNode.removeChild(cloud);
+            }, 5500);
+        }, i * 200);
+    }
+}
+
+function createSisterCelebration(container) {
+    // Family hearts and emojis pouring from top
+    for (let i = 0; i < 16; i++) {
+        setTimeout(() => {
+            const icons = ['🧡', '💛', '👨‍👩‍👧‍👦', '🤗', '💕'];
+            const heart = createCelebrationElement('family-heart', icons[i % 5], 
+                Math.random() * 100, -10);
+            heart.style.animationDelay = Math.random() * 0.5 + 's';
+            container.appendChild(heart);
+            
+            setTimeout(() => {
+                if (heart.parentNode) heart.parentNode.removeChild(heart);
+            }, 6500);
+        }, i * 140);
+    }
+}
