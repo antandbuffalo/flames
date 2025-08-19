@@ -15,11 +15,11 @@ function calculateFlames() {
         return;
     }
 
-    // Convert to lowercase only for algorithm logic
-    const name1 = originalName1.toLowerCase();
-    const name2 = originalName2.toLowerCase();
+    // Convert to lowercase and remove spaces for algorithm logic
+    const name1 = originalName1.toLowerCase().replace(/\s/g, '');
+    const name2 = originalName2.toLowerCase().replace(/\s/g, '');
 
-    // Start animation sequence with both original and lowercase names
+    // Start animation sequence with both original and processed names
     startAnimationSequence(originalName1, originalName2, name1, name2);
 }
 
@@ -61,23 +61,45 @@ function setupNamesForAnimation(originalName1, originalName2) {
     
     // Create letter elements for name1 using original case
     name1Container.innerHTML = '';
+    let calcIndex1 = 0; // Index for calculation (ignoring spaces)
     for (let i = 0; i < originalName1.length; i++) {
         const letterSpan = document.createElement('span');
         letterSpan.className = 'letter';
         letterSpan.textContent = originalName1[i];
-        letterSpan.setAttribute('data-index', i);
+        letterSpan.setAttribute('data-display-index', i);
         letterSpan.setAttribute('data-name', '1');
+        
+        // Only assign calculation index to non-space characters
+        if (originalName1[i] !== ' ') {
+            letterSpan.setAttribute('data-calc-index', calcIndex1);
+            calcIndex1++;
+        } else {
+            letterSpan.className = 'space-char'; // Different class for spaces
+            letterSpan.setAttribute('data-calc-index', '-1'); // Mark as space
+        }
+        
         name1Container.appendChild(letterSpan);
     }
     
     // Create letter elements for name2 using original case
     name2Container.innerHTML = '';
+    let calcIndex2 = 0; // Index for calculation (ignoring spaces)
     for (let i = 0; i < originalName2.length; i++) {
         const letterSpan = document.createElement('span');
         letterSpan.className = 'letter';
         letterSpan.textContent = originalName2[i];
-        letterSpan.setAttribute('data-index', i);
+        letterSpan.setAttribute('data-display-index', i);
         letterSpan.setAttribute('data-name', '2');
+        
+        // Only assign calculation index to non-space characters
+        if (originalName2[i] !== ' ') {
+            letterSpan.setAttribute('data-calc-index', calcIndex2);
+            calcIndex2++;
+        } else {
+            letterSpan.className = 'space-char'; // Different class for spaces
+            letterSpan.setAttribute('data-calc-index', '-1'); // Mark as space
+        }
+        
         name2Container.appendChild(letterSpan);
     }
 }
@@ -113,12 +135,9 @@ function animateStrikingStep(strikingSteps, stepIndex, originalName1, originalNa
     if (stepIndex < strikingSteps.length) {
         const step = strikingSteps[stepIndex];
         
-        // Find and animate the letters
-        const name1Letters = document.querySelectorAll('#animated-name1 .letter');
-        const name2Letters = document.querySelectorAll('#animated-name2 .letter');
-        
-        const name1Letter = name1Letters[step.name1Index];
-        const name2Letter = name2Letters[step.name2Index];
+        // Find letters using calculation index (ignoring spaces)
+        const name1Letter = document.querySelector(`#animated-name1 .letter[data-calc-index="${step.name1Index}"]`);
+        const name2Letter = document.querySelector(`#animated-name2 .letter[data-calc-index="${step.name2Index}"]`);
         
         // Add striking animation
         name1Letter.classList.add('striking');
@@ -395,9 +414,108 @@ function resetGame() {
 // Allow Enter key to calculate
 document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter' && !animationInProgress) {
-        calculateFlames();
+        calculateFlamesWithValidation();
     }
 });
+
+// Enhanced Input Experience Functions
+function initializeInputEnhancements() {
+    const name1Input = document.getElementById('name1');
+    const name2Input = document.getElementById('name2');
+
+    // Add input event listeners for both inputs
+    setupInputEnhancements(name1Input);
+    setupInputEnhancements(name2Input);
+}
+
+function setupInputEnhancements(input) {
+    // Input validation and auto-capitalization
+    input.addEventListener('input', function(e) {
+        validateInput(input);
+        autoCapitalize(input);
+    });
+
+    // Focus and blur effects
+    input.addEventListener('focus', function() {
+        input.classList.add('focused');
+    });
+
+    input.addEventListener('blur', function() {
+        input.classList.remove('focused');
+        validateInput(input);
+    });
+}
+
+function validateInput(input) {
+    const value = input.value.trim();
+    
+    // Remove previous validation classes
+    input.classList.remove('valid', 'invalid');
+    
+    if (value.length === 0) {
+        // Empty - no class
+        return;
+    } else {
+        // Valid - any non-empty input is accepted
+        input.classList.add('valid');
+    }
+}
+
+function autoCapitalize(input) {
+    const value = input.value;
+    const cursorPosition = input.selectionStart;
+    
+    // Capitalize first letter of each word
+    const capitalizedValue = value.replace(/\b\w/g, letter => letter.toUpperCase());
+    
+    if (capitalizedValue !== value) {
+        input.value = capitalizedValue;
+        // Restore cursor position
+        input.setSelectionRange(cursorPosition, cursorPosition);
+    }
+}
+
+function shakeInputContainer() {
+    const searchContainer = document.getElementById('search-container');
+    
+    // Add shake class
+    searchContainer.classList.add('shake-container');
+    
+    // Remove class after animation completes
+    setTimeout(() => {
+        searchContainer.classList.remove('shake-container');
+    }, 600);
+}
+
+// Update the main calculateFlames function to include validation
+function calculateFlamesWithValidation() {
+    const name1Input = document.getElementById('name1');
+    const name2Input = document.getElementById('name2');
+    const originalName1 = name1Input.value.trim();
+    const originalName2 = name2Input.value.trim();
+    
+    // Check if either name is empty
+    if (!originalName1 || !originalName2) {
+        // Add visual feedback for empty inputs
+        if (!originalName1) {
+            name1Input.classList.add('invalid');
+            setTimeout(() => name1Input.classList.remove('invalid'), 3000);
+        }
+        if (!originalName2) {
+            name2Input.classList.add('invalid');
+            setTimeout(() => name2Input.classList.remove('invalid'), 3000);
+        }
+        
+        // Shake the container
+        shakeInputContainer();
+        return;
+    }
+
+    // All non-empty inputs are valid - no additional character restrictions
+
+    // If validation passes, proceed with original calculation
+    calculateFlames();
+}
 
 // Floating Hearts Background Animation
 function createFloatingHeart() {
@@ -444,7 +562,10 @@ function startFloatingHearts() {
 
 // Start the floating hearts when page loads
 let heartInterval;
-document.addEventListener('DOMContentLoaded', startFloatingHearts);
+document.addEventListener('DOMContentLoaded', function() {
+    startFloatingHearts();
+    initializeInputEnhancements();
+});
 
 function stopFloatingHearts() {
     // Clear the interval to stop new hearts

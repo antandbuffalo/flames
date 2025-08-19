@@ -20,10 +20,14 @@
         <h1>Flames</h1>
         
         <div class="search-box" id="search-container">
-            <input type="text" id="name1" placeholder="Enter first name">
-            <input type="text" id="name2" placeholder="Enter second name">
+            <div class="input-container">
+                <input type="text" id="name1" placeholder="Enter first name">
+            </div>
+            <div class="input-container">
+                <input type="text" id="name2" placeholder="Enter second name">
+            </div>
             <div class="button-container">
-                <button class="flames-btn" onclick="calculateFlames()">FLAMES</button>
+                <button class="flames-btn" onclick="calculateFlamesWithValidation()">FLAMES</button>
             </div>
         </div>
 
