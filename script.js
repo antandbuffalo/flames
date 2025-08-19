@@ -635,12 +635,26 @@ function initializeInputEnhancements() {
     setupInputEnhancements(name1Input);
     setupInputEnhancements(name2Input);
     
-    // Add sound effect for turbo mode toggle
+    // Add sound effect for turbo mode toggle and styling
     if (fastModeCheckbox) {
+        const fastModeLabel = fastModeCheckbox.closest('.fast-mode-label');
+        
         fastModeCheckbox.addEventListener('change', () => {
             audioManager.createAudioContext();
             audioManager.playButtonClick();
+            
+            // Toggle active styling
+            if (fastModeCheckbox.checked) {
+                fastModeLabel.classList.add('active');
+            } else {
+                fastModeLabel.classList.remove('active');
+            }
         });
+        
+        // Set initial state
+        if (fastModeCheckbox.checked) {
+            fastModeLabel.classList.add('active');
+        }
     }
 }
 
