@@ -1,5 +1,12 @@
 let animationInProgress = false;
 
+// Fast Mode Helper Function
+function getAnimationTiming(normalTime) {
+    const fastModeCheckbox = document.getElementById('fast-mode');
+    const isFastMode = fastModeCheckbox && fastModeCheckbox.checked;
+    return isFastMode ? Math.max(normalTime * 0.15, 50) : normalTime; // Fast mode is 15% of normal speed, minimum 50ms
+}
+
 function calculateFlames() {
     const originalName1 = document.getElementById('name1').value.trim();
     const originalName2 = document.getElementById('name2').value.trim();
@@ -42,17 +49,17 @@ function startAnimationSequence(originalName1, originalName2, name1, name2) {
     // After search container starts fading, begin showing animation area
     setTimeout(() => {
         animationContainer.classList.add('show');
-    }, 200);
+    }, getAnimationTiming(200));
     
     // Hide search container completely after its transition
     setTimeout(() => {
         searchContainer.style.display = 'none';
-    }, 500);
+    }, getAnimationTiming(500));
     
     // Start the striking animation after smooth transition is well underway
     setTimeout(() => {
         animateStrikingLetters(originalName1, originalName2, name1, name2);
-    }, 800);
+    }, getAnimationTiming(800));
 }
 
 function setupNamesForAnimation(originalName1, originalName2) {
@@ -153,8 +160,8 @@ function animateStrikingStep(strikingSteps, stepIndex, originalName1, originalNa
             // Continue to next step
             setTimeout(() => {
                 animateStrikingStep(strikingSteps, stepIndex + 1, originalName1, originalName2, modifiedName1, modifiedName2);
-            }, 300);
-        }, 800);
+            }, getAnimationTiming(300));
+        }, getAnimationTiming(800));
     } else {
         // All striking complete, count remaining letters
         const remainingCount = modifiedName1.filter(char => char !== null).length + 
@@ -163,7 +170,7 @@ function animateStrikingStep(strikingSteps, stepIndex, originalName1, originalNa
         // Start FLAMES elimination after a pause
         setTimeout(() => {
             animateFlamesElimination(remainingCount, originalName1, originalName2);
-        }, 1500);
+        }, getAnimationTiming(1500));
     }
 }
 
@@ -190,7 +197,7 @@ function animateFlamesElimination(count, originalName1, originalName2) {
     // Start elimination animation
     setTimeout(() => {
         eliminateFlamesLetter(flames, currentIndex, count, flamesContainer, originalName1, originalName2);
-    }, 1000);
+    }, getAnimationTiming(1000));
 }
 
 function eliminateFlamesLetter(flames, currentIndex, count, container, originalName1, originalName2) {
@@ -244,7 +251,7 @@ function animateFlamesCounting(flames, currentIndex, count, container, originalN
             // Continue counting
             setTimeout(() => {
                 highlightNextLetter();
-            }, 300);
+            }, getAnimationTiming(300));
         } else {
             // Counting complete, keep the last highlighted letter and show striking phase
             counterDisplay.textContent = `Counting: 0 of ${count}`;
@@ -283,9 +290,9 @@ function animateFlamesCounting(flames, currentIndex, count, container, originalN
                     // Continue elimination after a short pause
                     setTimeout(() => {
                         eliminateFlamesLetter(flames, newCurrentIndex, count, container, originalName1, originalName2);
-                    }, 600);
-                }, 800);
-            }, 300);
+                    }, getAnimationTiming(600));
+                }, getAnimationTiming(800));
+            }, getAnimationTiming(300));
         }
     }
     
@@ -401,14 +408,14 @@ function resetGame() {
     setTimeout(() => {
         searchContainer.style.display = 'block';
         searchContainer.classList.remove('search-container-hidden');
-    }, 100);
+    }, getAnimationTiming(100));
     
     // Hide animation container completely after transition
     setTimeout(() => {
         animationContainer.style.display = 'none';
         // Restart floating hearts
         startFloatingHearts();
-    }, 600);
+    }, getAnimationTiming(600));
 }
 
 // Allow Enter key to calculate
@@ -484,7 +491,7 @@ function shakeInputContainer() {
     // Remove class after animation completes
     setTimeout(() => {
         searchContainer.classList.remove('shake-container');
-    }, 600);
+    }, getAnimationTiming(600));
 }
 
 // Update the main calculateFlames function to include validation
@@ -499,11 +506,11 @@ function calculateFlamesWithValidation() {
         // Add visual feedback for empty inputs
         if (!originalName1) {
             name1Input.classList.add('invalid');
-            setTimeout(() => name1Input.classList.remove('invalid'), 3000);
+            setTimeout(() => name1Input.classList.remove('invalid'), getAnimationTiming(3000));
         }
         if (!originalName2) {
             name2Input.classList.add('invalid');
-            setTimeout(() => name2Input.classList.remove('invalid'), 3000);
+            setTimeout(() => name2Input.classList.remove('invalid'), getAnimationTiming(3000));
         }
         
         // Shake the container
@@ -582,7 +589,7 @@ function stopFloatingHearts() {
             if (heart.parentNode) {
                 heart.parentNode.removeChild(heart);
             }
-        }, 500);
+        }, getAnimationTiming(500));
     });
 }
 

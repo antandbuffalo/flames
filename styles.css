@@ -219,6 +219,68 @@ input[type="text"]::placeholder {
     left: 100%;
 }
 
+/* Fast Mode Checkbox Styling */
+.fast-mode-container {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fast-mode-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    transition: color 0.3s ease;
+    user-select: none;
+}
+
+.fast-mode-label:hover {
+    color: #ff6b6b;
+}
+
+.fast-mode-checkbox {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background: white;
+}
+
+.fast-mode-checkbox:hover {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.1);
+}
+
+.fast-mode-checkbox:checked {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+}
+
+.fast-mode-checkbox:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.fast-mode-text {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
 /* Reset Button Special Styling */
 .reset-btn {
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
