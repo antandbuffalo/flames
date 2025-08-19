@@ -1,10 +1,196 @@
 let animationInProgress = false;
 
-// Fast Mode Helper Function
+// Turbo Mode Helper Function
 function getAnimationTiming(normalTime) {
     const fastModeCheckbox = document.getElementById('fast-mode');
     const isFastMode = fastModeCheckbox && fastModeCheckbox.checked;
-    return isFastMode ? Math.max(normalTime * 0.15, 50) : normalTime; // Fast mode is 15% of normal speed, minimum 50ms
+    return isFastMode ? Math.max(normalTime * 0.15, 50) : normalTime; // Turbo mode is 15% of normal speed, minimum 50ms
+}
+
+// Audio Management System
+class AudioManager {
+    constructor() {
+        this.audioContext = null;
+        this.isMuted = false;
+        this.volume = 0.3; // Default volume (30%)
+        this.isInitialized = false;
+        this.initializeFromStorage();
+        this.createAudioContext();
+    }
+
+    initializeFromStorage() {
+        // Load user preferences from localStorage
+        const audioSettings = localStorage.getItem('flamesAudioSettings');
+        if (audioSettings) {
+            const settings = JSON.parse(audioSettings);
+            this.isMuted = settings.isMuted || false;
+            this.volume = settings.volume !== undefined ? settings.volume : 0.3;
+        }
+    }
+
+    saveToStorage() {
+        // Save user preferences to localStorage
+        localStorage.setItem('flamesAudioSettings', JSON.stringify({
+            isMuted: this.isMuted,
+            volume: this.volume
+        }));
+    }
+
+    createAudioContext() {
+        // Create AudioContext only when user interacts (respects autoplay policies)
+        if (!this.audioContext) {
+            try {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.isInitialized = true;
+            } catch (e) {
+                console.log('Web Audio API not supported');
+                this.isInitialized = false;
+            }
+        }
+    }
+
+    async resumeAudioContext() {
+        // Resume audio context if suspended (required by browser policies)
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            await this.audioContext.resume();
+        }
+    }
+
+    playTone(frequency, duration, type = 'sine', fadeOut = true) {
+        if (!this.isInitialized || this.isMuted || !this.audioContext) return;
+
+        this.resumeAudioContext();
+
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(this.volume, this.audioContext.currentTime + 0.01);
+        
+        if (fadeOut) {
+            gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
+        }
+        
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + duration);
+    }
+
+    playChord(frequencies, duration, type = 'sine') {
+        if (!this.isInitialized || this.isMuted || !this.audioContext) return;
+
+        this.resumeAudioContext();
+
+        frequencies.forEach(freq => {
+            this.playTone(freq, duration, type, true);
+        });
+    }
+
+    // Sound effect methods
+    playButtonClick() {
+        // Soft pop sound
+        this.playTone(800, 0.1, 'triangle');
+        setTimeout(() => this.playTone(600, 0.05, 'triangle'), 50);
+    }
+
+    playTransition() {
+        // Gentle whoosh sound
+        this.playTone(400, 0.3, 'sine');
+        setTimeout(() => this.playTone(350, 0.2, 'sine'), 100);
+    }
+
+    playLetterStrike() {
+        // Quick strike sound
+        this.playTone(700, 0.15, 'triangle');
+    }
+
+    playCountingTick() {
+        // Subtle tick for counting
+        this.playTone(900, 0.08, 'square');
+    }
+
+    playResultReveal(resultType) {
+        // Different celebration sounds for each result
+        switch(resultType) {
+            case 'Love':
+                // Romantic chord
+                this.playChord([523, 659, 784], 1.2); // C-E-G major
+                break;
+            case 'Marriage':
+                // Wedding bells
+                this.playChord([698, 880, 1047], 1.5); // F-A-C
+                setTimeout(() => this.playChord([784, 988, 1175], 1.0), 300);
+                break;
+            case 'Friend':
+                // Happy and upbeat
+                this.playChord([587, 740, 880], 1.0); // D-F#-A
+                break;
+            case 'Affection':
+                // Gentle and warm
+                this.playChord([440, 554, 659], 1.3); // A-C#-E
+                break;
+            case 'Enemy':
+                // Playful dramatic
+                this.playTone(300, 0.5, 'sawtooth');
+                setTimeout(() => this.playTone(250, 0.3, 'sawtooth'), 200);
+                break;
+            case 'Sister':
+                // Family warmth
+                this.playChord([523, 659, 880], 1.2); // C-E-A
+                break;
+        }
+    }
+
+    setVolume(volume) {
+        this.volume = Math.max(0, Math.min(1, volume));
+        this.saveToStorage();
+    }
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        this.saveToStorage();
+        this.updateAudioControls();
+    }
+
+    updateAudioControls() {
+        const muteButton = document.getElementById('mute-toggle');
+        
+        if (muteButton) {
+            muteButton.innerHTML = this.isMuted ? '🔇' : '🔊';
+            muteButton.title = this.isMuted ? 'Unmute sounds' : 'Mute sounds';
+        }
+    }
+}
+
+// Global audio manager instance
+const audioManager = new AudioManager();
+
+// Initialize audio controls
+function initializeAudioControls() {
+    const muteButton = document.getElementById('mute-toggle');
+    
+    if (muteButton) {
+        muteButton.addEventListener('click', () => {
+            audioManager.createAudioContext(); // Ensure context is created on first interaction
+            
+            if (audioManager.isMuted) {
+                // Currently muted, so unmute first then play click sound
+                audioManager.toggleMute();
+                setTimeout(() => audioManager.playButtonClick(), 50); // Play sound after unmuting
+            } else {
+                // Currently unmuted, so just mute immediately with no sound
+                audioManager.toggleMute();
+            }
+        });
+    }
+    
+    // Update audio controls to reflect current state
+    audioManager.updateAudioControls();
 }
 
 function calculateFlames() {
@@ -32,6 +218,9 @@ function calculateFlames() {
 
 function startAnimationSequence(originalName1, originalName2, name1, name2) {
     animationInProgress = true;
+    
+    // Play transition sound
+    audioManager.playTransition();
     
     // Hide search container with animation
     const searchContainer = document.getElementById('search-container');
@@ -150,6 +339,9 @@ function animateStrikingStep(strikingSteps, stepIndex, originalName1, originalNa
         name1Letter.classList.add('striking');
         name2Letter.classList.add('striking');
         
+        // Play letter strike sound
+        audioManager.playLetterStrike();
+        
         // After animation, mark as struck
         setTimeout(() => {
             name1Letter.classList.remove('striking');
@@ -242,6 +434,8 @@ function animateFlamesCounting(flames, currentIndex, count, container, originalN
             // Highlight current letter
             if (countingIndex < flamesLetters.length) {
                 flamesLetters[countingIndex].classList.add('counting');
+                // Play counting tick sound
+                audioManager.playCountingTick();
             }
             
             // Move to next letter
@@ -347,6 +541,9 @@ function showFinalResult(letter, originalName1, originalName2) {
         </div>
     `;
     
+    // Play result reveal sound
+    audioManager.playResultReveal(relationship.name);
+    
     // Stop floating hearts and trigger celebration animation
     setTimeout(() => {
         stopFloatingHearts();
@@ -362,7 +559,10 @@ function showFinalResult(letter, originalName1, originalName2) {
         resetButton.style.display = 'block';
         resetButton.style.marginLeft = 'auto';
         resetButton.style.marginRight = 'auto';
-        resetButton.onclick = resetGame;
+        resetButton.onclick = () => {
+            audioManager.playButtonClick();
+            setTimeout(() => resetGame(), 50); // Small delay so click sound plays
+        };
         resultDiv.appendChild(resetButton);
     }, 1000);
 }
@@ -429,10 +629,19 @@ document.addEventListener('keypress', function(e) {
 function initializeInputEnhancements() {
     const name1Input = document.getElementById('name1');
     const name2Input = document.getElementById('name2');
+    const fastModeCheckbox = document.getElementById('fast-mode');
 
     // Add input event listeners for both inputs
     setupInputEnhancements(name1Input);
     setupInputEnhancements(name2Input);
+    
+    // Add sound effect for turbo mode toggle
+    if (fastModeCheckbox) {
+        fastModeCheckbox.addEventListener('change', () => {
+            audioManager.createAudioContext();
+            audioManager.playButtonClick();
+        });
+    }
 }
 
 function setupInputEnhancements(input) {
@@ -496,6 +705,12 @@ function shakeInputContainer() {
 
 // Update the main calculateFlames function to include validation
 function calculateFlamesWithValidation() {
+    // Ensure audio context is ready on user interaction
+    audioManager.createAudioContext();
+    
+    // Play button click sound
+    audioManager.playButtonClick();
+    
     const name1Input = document.getElementById('name1');
     const name2Input = document.getElementById('name2');
     const originalName1 = name1Input.value.trim();
@@ -572,6 +787,7 @@ let heartInterval;
 document.addEventListener('DOMContentLoaded', function() {
     startFloatingHearts();
     initializeInputEnhancements();
+    initializeAudioControls();
 });
 
 function stopFloatingHearts() {
