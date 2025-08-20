@@ -1446,3 +1446,107 @@ input[type="text"]::placeholder {
         font-size: 13px;
     }
 }
+
+/* Export-safe card (used only for html2canvas capture) */
+.export-wrap {
+    width: 640px;
+    padding: 4px;
+    border-radius: 22px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b, #eb4d4b, #6c5ce7);
+}
+
+.export-card {
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.export-wrap.export-friend .export-card { 
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4f1d4 100%);
+    color: #0f5a2c;
+    border: 2px solid #a8d8a8;
+}
+.export-wrap.export-love .export-card { 
+    background: linear-gradient(135deg, #fce8e6 0%, #fdd6d1 100%);
+    color: #b91c00;
+    border: 2px solid #f19a88;
+}
+.export-wrap.export-affection .export-card { 
+    background: linear-gradient(135deg, #f3e8fd 0%, #e8d6fc 100%);
+    color: #6a1b8c;
+    border: 2px solid #c292f7;
+}
+.export-wrap.export-marriage .export-card { 
+    background: linear-gradient(135deg, #fff3cd 0%, #fff0b8 100%);
+    color: #6b5003;
+    border: 2px solid #ffd93d;
+}
+.export-wrap.export-enemy .export-card { 
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%);
+    color: #5a161c;
+    border: 2px solid #ed969e;
+}
+.export-wrap.export-sister .export-card { 
+    background: linear-gradient(135deg, #e7f3ff 0%, #d1e7ff 100%);
+    color: #0a3d91;
+    border: 2px solid #90caf9;
+}
+
+.export-icon {
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.export-title {
+    font-size: 42px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 8px 0;
+}
+
+.export-underline {
+    width: 120px;
+    height: 6px;
+    border-radius: 3px;
+    margin: 8px auto 24px auto;
+    opacity: 0.7;
+}
+
+.export-wrap.export-friend .export-underline { background: #0f5a2c; }
+.export-wrap.export-love .export-underline { background: #b91c00; }
+.export-wrap.export-affection .export-underline { background: #6a1b8c; }
+.export-wrap.export-marriage .export-underline { background: #6b5003; }
+.export-wrap.export-enemy .export-underline { background: #5a161c; }
+.export-wrap.export-sister .export-underline { background: #0a3d91; }
+
+.export-names {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin: 12px 0 24px 0;
+}
+
+.export-name-tag {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 28px;
+    padding: 10px 18px;
+    font-weight: 700;
+    font-size: 22px;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.export-amp {
+    font-size: 28px;
+    font-weight: 800;
+    opacity: 0.7;
+}
+
+.export-message {
+    text-align: center;
+    font-size: 20px;
+    color: rgba(0,0,0,0.7);
+}

@@ -1164,103 +1164,95 @@ function closeShareModal() {
 }
 
 // Image Generation using html2canvas with styling fixes
+// Build export-safe DOM node for html2canvas
+function buildExportNode(name1, name2, resultName, resultIcon) {
+    const wrapper = document.createElement('div');
+    const cls = `export-wrap export-${resultName.toLowerCase()}`;
+    wrapper.setAttribute('class', cls);
+
+    wrapper.innerHTML = `
+        <div class="export-card">
+            <div class="export-icon">${resultIcon}</div>
+            <div class="export-title">${resultName}</div>
+            <div class="export-underline"></div>
+            <div class="export-names">
+                <div class="export-name-tag">${name1}</div>
+                <div class="export-amp">&</div>
+                <div class="export-name-tag">${name2}</div>
+            </div>
+            <div class="export-message">${getResultExportMessage(resultName)}</div>
+        </div>
+    `;
+
+    return wrapper;
+}
+
+function getResultExportMessage(resultName) {
+    switch (resultName) {
+        case 'Friend': return 'You two are destined to be great friends!';
+        case 'Love': return 'Love is in the air! 💕';
+        case 'Affection': return "There's a special affection between you two!";
+        case 'Marriage': return 'Wedding bells might be ringing! 💒';
+        case 'Enemy': return 'You might face some challenges... 😬';
+        case 'Sister': return "You're like family to each other!";
+        default: return 'A special connection between you two!';
+    }
+}
+
+// Render export-safe node with html2canvas
+async function renderExportImage(name1, name2, resultName, resultIcon) {
+    const exportNode = buildExportNode(name1, name2, resultName, resultIcon);
+
+    // Keep it offscreen and invisible but renderable
+    exportNode.style.position = 'fixed';
+    exportNode.style.left = '-99999px';
+    exportNode.style.top = '0';
+
+    document.body.appendChild(exportNode);
+
+    // Give layout a tick
+    await new Promise(r => setTimeout(r, 20));
+
+    const card = exportNode.querySelector('.export-card');
+    const canvas = await html2canvas(exportNode, {
+        backgroundColor: null,
+        useCORS: true,
+        scale: 2,
+        logging: false,
+        width: exportNode.offsetWidth,
+        height: exportNode.offsetHeight,
+        scrollX: 0,
+        scrollY: 0
+    });
+
+    // Clean up DOM
+    document.body.removeChild(exportNode);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = `flames-result-${name1}-${name2}.png`;
+    link.href = canvas.toDataURL('image/png', 1.0);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Hook the Image button to export-safe renderer
+// Override previous image generation to call export renderer
 async function generateShareImageFromUI(name1, name2) {
     try {
-        const resultCard = document.querySelector('.result');
-        if (!resultCard) {
-            showShareFeedback('❌ Result card not found', 'error');
-            return;
-        }
+        // Infer result from DOM
+        const titleEl = document.querySelector('.result h2');
+        const resultName = titleEl ? titleEl.textContent.trim() : 'Love';
 
-        console.log('Capturing result card with html2canvas...');
+        const iconEl = document.querySelector('.result .result-icon');
+        const resultIcon = iconEl ? iconEl.textContent.trim() : '✨';
 
-        // Store original styles to restore later
-        const originalStyles = {
-            backdropFilter: resultCard.style.backdropFilter,
-            filter: resultCard.style.filter
-        };
-
-        // Temporarily remove problematic CSS properties for better capture
-        resultCard.style.backdropFilter = 'none';
-        resultCard.style.filter = 'none';
-
-        // Wait a moment for styles to apply
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        const canvas = await html2canvas(resultCard, {
-            backgroundColor: '#ffffff', // White background for consistency
-            useCORS: true,
-            scale: 2,
-            logging: false,
-            allowTaint: true,
-            foreignObjectRendering: true,
-            removeContainer: false,
-            imageTimeout: 15000,
-            height: null, // Let html2canvas determine the height
-            width: null,  // Let html2canvas determine the width
-            scrollX: 0,
-            scrollY: 0,
-            onclone: function(clonedDoc) {
-                // Apply fixes to the cloned document for better rendering
-                const clonedCard = clonedDoc.querySelector('.result');
-                if (clonedCard) {
-                    // Remove backdrop filter from cloned element
-                    clonedCard.style.backdropFilter = 'none';
-                    clonedCard.style.webkitBackdropFilter = 'none';
-                    
-                    // Ensure proper background is applied
-                    const computedStyle = window.getComputedStyle(resultCard);
-                    clonedCard.style.background = computedStyle.background;
-                    
-                    // Remove the animated pseudo-element border
-                    const styleElement = clonedDoc.createElement('style');
-                    styleElement.textContent = `
-                        .result::before {
-                            display: none !important;
-                        }
-                        .result {
-                            border: 3px solid #ddd !important;
-                        }
-                    `;
-                    clonedDoc.head.appendChild(styleElement);
-                }
-            }
-        });
-
-        // Restore original styles
-        resultCard.style.backdropFilter = originalStyles.backdropFilter;
-        resultCard.style.filter = originalStyles.filter;
-
-        console.log('Canvas captured, size:', canvas.width, 'x', canvas.height);
-
-        // If canvas is too small, there's still an issue
-        if (canvas.width < 100 || canvas.height < 100) {
-            console.error('Captured canvas is too small:', canvas.width, 'x', canvas.height);
-            showShareFeedback('❌ Image capture failed - card too small', 'error');
-            return;
-        }
-
-        // Add watermark
-        const ctx = canvas.getContext('2d');
-        ctx.font = '20px Arial';
-        ctx.fillStyle = 'rgba(153, 153, 153, 0.7)';
-        ctx.textAlign = 'center';
-        ctx.fillText('🔥 FLAMES Game', canvas.width / 2, canvas.height - 20);
-
-        // Download the image
-        const link = document.createElement('a');
-        link.download = `flames-result-${name1}-${name2}.png`;
-        link.href = canvas.toDataURL('image/png', 1.0);
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
+        await renderExportImage(name1, name2, resultName, resultIcon);
         showShareFeedback('🖼️ Image downloaded!', 'success');
-        console.log('Image download completed successfully');
-    } catch (error) {
-        console.error('Image generation failed:', error);
-        showShareFeedback('❌ Image generation failed: ' + error.message, 'error');
+    } catch (err) {
+        console.error('Export image failed:', err);
+        showShareFeedback('❌ Image generation failed', 'error');
     }
 }
 
