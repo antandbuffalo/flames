@@ -576,6 +576,141 @@ input[type="text"]::placeholder {
     margin: 0 4px;
 }
 
+.share-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 25px;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 90px;
+    justify-content: center;
+}
+
+.share-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.share-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.copy-btn:hover {
+    border-color: rgba(76, 175, 80, 0.5);
+    color: #4caf50;
+}
+
+.web-share-btn:hover {
+    border-color: rgba(33, 150, 243, 0.5);
+    color: #2196f3;
+}
+
+.image-btn:hover {
+    border-color: rgba(156, 39, 176, 0.5);
+    color: #9c27b0;
+}
+
+/* History and Suggestions Sections */
+.history-section,
+.suggestions-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.history-section h4,
+.suggestions-section h4 {
+    color: #555;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.history-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-names {
+    font-weight: 500;
+    color: #333;
+}
+
+.history-result {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+}
+
+.name-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.suggestion-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    color: #555;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.suggestion-btn:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: rgba(255, 107, 107, 0.3);
+    color: #ff6b6b;
+    transform: translateY(-1px);
+}
+
 .steps {
     display: none; /* Hide steps for clean look initially */
     margin-top: 30px;
@@ -1283,6 +1418,46 @@ input[type="text"]::placeholder {
 
     .result p {
         font-size: 14px;
+    }
+    
+    .share-actions {
+        gap: 8px;
+        margin-top: 20px;
+    }
+    
+    .share-btn {
+        font-size: 13px;
+        padding: 8px 12px;
+        min-width: 80px;
+    }
+    
+    .history-section,
+    .suggestions-section {
+        margin-top: 20px;
+        padding: 15px;
+    }
+    
+    .history-section h4,
+    .suggestions-section h4 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+    
+    .history-item {
+        padding: 8px 12px;
+    }
+    
+    .history-names {
+        font-size: 14px;
+    }
+    
+    .history-result {
+        font-size: 13px;
+    }
+    
+    .suggestion-btn {
+        font-size: 12px;
+        padding: 6px 10px;
     }
 
     .step {

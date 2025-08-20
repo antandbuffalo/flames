@@ -538,6 +538,17 @@ function showFinalResult(letter, originalName1, originalName2) {
                 <span class="result-name">${originalName2}</span>
             </div>
             <p>${relationship.message}</p>
+            <div class="share-actions">
+                <button class="share-btn copy-btn" onclick="copyResultToClipboard('${originalName1}', '${originalName2}', '${relationship.name}', '${relationship.message}')" title="Copy to clipboard">
+                    📋 Copy
+                </button>
+                <button class="share-btn web-share-btn" onclick="shareResult('${originalName1}', '${originalName2}', '${relationship.name}', '${relationship.message}')" title="Share">
+                    📤 Share
+                </button>
+                <button class="share-btn image-btn" onclick="generateShareImage('${originalName1}', '${originalName2}', '${relationship.name}', '${resultIcon}')" title="Download image">
+                    🖼️ Image
+                </button>
+            </div>
         </div>
     `;
     
@@ -550,7 +561,10 @@ function showFinalResult(letter, originalName1, originalName2) {
         triggerCelebration(relationship.name);
     }, 500);
     
-    // Add reset button below the result
+    // Store result in history
+    storeResultInHistory(originalName1, originalName2, relationship.name, relationship.message);
+    
+    // Add reset button and history section below the result
     setTimeout(() => {
         const resetButton = document.createElement('button');
         resetButton.innerHTML = 'Try Another Pair';
@@ -564,6 +578,9 @@ function showFinalResult(letter, originalName1, originalName2) {
             setTimeout(() => resetGame(), 50); // Small delay so click sound plays
         };
         resultDiv.appendChild(resetButton);
+        
+        // Add history section
+        addHistorySection(resultDiv);
     }, 1000);
 }
 
@@ -966,3 +983,365 @@ function createSisterCelebration(container) {
         }, i * 140);
     }
 }
+
+// ==================== SOCIAL SHARING & RESULTS FUNCTIONALITY ====================
+
+// Results History Management
+function storeResultInHistory(name1, name2, result, message) {
+    try {
+        const historyKey = 'flames_results_history';
+        let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+        
+        const newResult = {
+            id: Date.now(),
+            name1: name1,
+            name2: name2,
+            result: result,
+            message: message,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Add to beginning of array
+        history.unshift(newResult);
+        
+        // Keep only last 10 results
+        if (history.length > 10) {
+            history = history.slice(0, 10);
+        }
+        
+        localStorage.setItem(historyKey, JSON.stringify(history));
+    } catch (error) {
+        console.log('Could not store result in history:', error);
+    }
+}
+
+function getResultsHistory() {
+    try {
+        return JSON.parse(localStorage.getItem('flames_results_history') || '[]');
+    } catch (error) {
+        console.log('Could not retrieve results history:', error);
+        return [];
+    }
+}
+
+// Copy to Clipboard Functionality
+async function copyResultToClipboard(name1, name2, result, message) {
+    const shareText = `🔥 FLAMES Result 🔥\n\n${name1} & ${name2}\nResult: ${result}\n\n${message}\n\nTry FLAMES yourself! 💕`;
+    
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(shareText);
+            showShareFeedback('📋 Copied to clipboard!', 'success');
+        } else {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = shareText;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showShareFeedback('📋 Copied to clipboard!', 'success');
+            } catch (err) {
+                showShareFeedback('❌ Copy failed', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+    } catch (error) {
+        showShareFeedback('❌ Copy failed', 'error');
+    }
+}
+
+// Web Share API for Mobile
+async function shareResult(name1, name2, result, message) {
+    const shareData = {
+        title: `FLAMES Result: ${result}`,
+        text: `${name1} & ${name2} - ${result}\n\n${message}`,
+        url: window.location.href
+    };
+    
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+            showShareFeedback('📤 Shared successfully!', 'success');
+        } else {
+            // Fallback: Open share options
+            showShareOptions(name1, name2, result, message);
+        }
+    } catch (error) {
+        if (error.name !== 'AbortError') {
+            showShareFeedback('❌ Share failed', 'error');
+        }
+    }
+}
+
+// Fallback Share Options Modal
+function showShareOptions(name1, name2, result, message) {
+    const shareText = encodeURIComponent(`${name1} & ${name2} - ${result}\n\n${message}\n\nTry FLAMES yourself!`);
+    const shareUrl = encodeURIComponent(window.location.href);
+    
+    const options = [
+        {
+            name: 'WhatsApp',
+            url: `https://wa.me/?text=${shareText}%20${shareUrl}`,
+            icon: '💬'
+        },
+        {
+            name: 'Twitter',
+            url: `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`,
+            icon: '🐦'
+        },
+        {
+            name: 'Facebook',
+            url: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`,
+            icon: '📘'
+        }
+    ];
+    
+    let optionsHtml = '<div class="share-modal-overlay" onclick="closeShareModal()">';
+    optionsHtml += '<div class="share-modal" onclick="event.stopPropagation()">';
+    optionsHtml += '<h3>Share your result</h3>';
+    
+    options.forEach(option => {
+        optionsHtml += `<a href="${option.url}" target="_blank" class="share-option" onclick="closeShareModal()">
+            ${option.icon} ${option.name}
+        </a>`;
+    });
+    
+    optionsHtml += '<button onclick="closeShareModal()" class="close-modal-btn">Close</button>';
+    optionsHtml += '</div></div>';
+    
+    document.body.insertAdjacentHTML('beforeend', optionsHtml);
+}
+
+function closeShareModal() {
+    const modal = document.querySelector('.share-modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Image Generation using Canvas
+async function generateShareImage(name1, name2, result, resultIcon) {
+    try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        canvas.width = 600;
+        canvas.height = 400;
+        
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#ff6b6b');
+        gradient.addColorStop(0.25, '#ffd93d');
+        gradient.addColorStop(0.5, '#6bcf7f');
+        gradient.addColorStop(0.75, '#4d9de0');
+        gradient.addColorStop(1, '#bb6bd9');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Add semi-transparent overlay
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
+        
+        // Add title
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 48px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('FLAMES', canvas.width / 2, 120);
+        
+        // Add result icon
+        ctx.font = '64px Arial';
+        ctx.fillText(resultIcon, canvas.width / 2, 190);
+        
+        // Add names
+        ctx.font = 'bold 32px Arial';
+        ctx.fillText(`${name1} & ${name2}`, canvas.width / 2, 240);
+        
+        // Add result
+        ctx.font = 'bold 28px Arial';
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText(result, canvas.width / 2, 280);
+        
+        // Add watermark
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#666';
+        ctx.fillText('Play FLAMES online!', canvas.width / 2, 340);
+        
+        // Download the image
+        const link = document.createElement('a');
+        link.download = `flames-result-${name1}-${name2}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+        
+        showShareFeedback('🖼️ Image downloaded!', 'success');
+    } catch (error) {
+        console.error('Image generation failed:', error);
+        showShareFeedback('❌ Image generation failed', 'error');
+    }
+}
+
+// Share Feedback Display
+function showShareFeedback(message, type) {
+    const feedback = document.createElement('div');
+    feedback.className = `share-feedback ${type}`;
+    feedback.textContent = message;
+    feedback.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#4caf50' : '#f44336'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-weight: 500;
+        z-index: 10000;
+        animation: feedbackSlide 3s ease forwards;
+    `;
+    
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+        }
+    }, 3000);
+}
+
+// History and Quick Suggestions
+function addHistorySection(resultDiv) {
+    const history = getResultsHistory();
+    
+    if (history.length > 1) { // Only show if there's previous history
+        const historySection = document.createElement('div');
+        historySection.className = 'history-section';
+        historySection.innerHTML = `
+            <h4>Recent Results</h4>
+            <div class="history-items">
+                ${history.slice(0, 3).map(item => `
+                    <div class="history-item" onclick="tryAgainWithNames('${item.name1}', '${item.name2}')">
+                        <span class="history-names">${item.name1} & ${item.name2}</span>
+                        <span class="history-result">${item.result}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        resultDiv.appendChild(historySection);
+    }
+    
+    // Add name suggestions
+    const suggestionsSection = document.createElement('div');
+    suggestionsSection.className = 'suggestions-section';
+    suggestionsSection.innerHTML = `
+        <h4>Try Popular Names</h4>
+        <div class="name-suggestions">
+            ${getPopularNamePairs().map(pair => `
+                <button class="suggestion-btn" onclick="tryAgainWithNames('${pair[0]}', '${pair[1]}')">
+                    ${pair[0]} & ${pair[1]}
+                </button>
+            `).join('')}
+        </div>
+    `;
+    
+    resultDiv.appendChild(suggestionsSection);
+}
+
+function getPopularNamePairs() {
+    return [
+        ['Alex', 'Taylor'],
+        ['Sam', 'Jordan'],
+        ['Casey', 'Morgan'],
+        ['Riley', 'Avery'],
+        ['Blake', 'Quinn']
+    ];
+}
+
+function tryAgainWithNames(name1, name2) {
+    audioManager.playButtonClick();
+    
+    // Fill the input fields
+    document.getElementById('name1').value = name1;
+    document.getElementById('name2').value = name2;
+    
+    // Reset and calculate
+    setTimeout(() => {
+        resetGame();
+        setTimeout(() => {
+            calculateFlamesWithValidation();
+        }, 100);
+    }, 50);
+}
+
+// Add feedback animation CSS
+const feedbackStyles = document.createElement('style');
+feedbackStyles.textContent = `
+@keyframes feedbackSlide {
+    0% { transform: translateX(100%); opacity: 0; }
+    10%, 90% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.share-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 300px;
+    width: 90%;
+    text-align: center;
+}
+
+.share-modal h3 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.share-option {
+    display: block;
+    padding: 12px 20px;
+    margin: 8px 0;
+    background: #f5f5f5;
+    border-radius: 25px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.share-option:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.close-modal-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+}
+`;
+document.head.appendChild(feedbackStyles);
