@@ -139,7 +139,7 @@ class AudioManager {
                 this.playTone(300, 0.5, 'sawtooth');
                 setTimeout(() => this.playTone(250, 0.3, 'sawtooth'), 200);
                 break;
-            case 'Sister':
+            case 'Sibling':
                 // Family warmth
                 this.playChord([523, 659, 880], 1.2); // C-E-A
                 break;
@@ -501,7 +501,7 @@ function showFinalResult(letter, originalName1, originalName2) {
         'A': { name: 'Affection', message: 'There\'s a special affection between you two!' },
         'M': { name: 'Marriage', message: 'Wedding bells might be ringing! 💒' },
         'E': { name: 'Enemy', message: 'You might face some challenges... 😬' },
-        'S': { name: 'Sister', message: 'You\'re like family to each other!' }
+        'S': { name: 'Sibling', message: 'You\'re like family to each other!' }
     };
     
     const relationship = relationships[letter];
@@ -523,7 +523,7 @@ function showFinalResult(letter, originalName1, originalName2) {
         'Affection': '💖',
         'Marriage': '💒',
         'Enemy': '⚡',
-        'Sister': '👨‍👩‍👧‍👦'
+        'Sibling': '👨‍👩‍👧‍👦'
     };
     
     const resultIcon = resultIcons[relationship.name] || '✨';
@@ -877,8 +877,8 @@ function triggerCelebration(resultType) {
         case 'Enemy':
             createEnemyCelebration(container);
             break;
-        case 'Sister':
-            createSisterCelebration(container);
+        case 'Sibling':
+            createSiblingCelebration(container);
             break;
     }
     
@@ -973,7 +973,7 @@ function createEnemyCelebration(container) {
     }
 }
 
-function createSisterCelebration(container) {
+function createSiblingCelebration(container) {
     // Family hearts and emojis pouring from top
     for (let i = 0; i < 16; i++) {
         setTimeout(() => {
@@ -1022,7 +1022,8 @@ function setupShareButtons() {
             const result = this.dataset.result;
             const message = this.dataset.message;
             console.log('Share data:', {name1, name2, result, message});
-            shareResult(name1, name2, result, message);
+            // Prefer sharing image; fallback inside handles text-only
+            shareResultWithImage(name1, name2, result, message);
         });
     }
     
@@ -1194,7 +1195,7 @@ function getResultExportMessage(resultName) {
         case 'Affection': return "There's a special affection between you two!";
         case 'Marriage': return 'Wedding bells might be ringing! 💒';
         case 'Enemy': return 'You might face some challenges... 😬';
-        case 'Sister': return "You're like family to each other!";
+        case 'Sibling': return "You're like family to each other!";
         default: return 'A special connection between you two!';
     }
 }
@@ -1253,6 +1254,57 @@ async function generateShareImageFromUI(name1, name2) {
     } catch (err) {
         console.error('Export image failed:', err);
         showShareFeedback('❌ Image generation failed', 'error');
+    }
+}
+
+// Create an export canvas for image sharing/downloading
+async function createExportCanvas(name1, name2, resultName, resultIcon) {
+    const exportNode = buildExportNode(name1, name2, resultName, resultIcon);
+    exportNode.style.position = 'fixed';
+    exportNode.style.left = '-99999px';
+    exportNode.style.top = '0';
+    document.body.appendChild(exportNode);
+    await new Promise(r => setTimeout(r, 20));
+    const canvas = await html2canvas(exportNode, {
+        backgroundColor: null,
+        useCORS: true,
+        scale: 2,
+        logging: false,
+        width: exportNode.offsetWidth,
+        height: exportNode.offsetHeight,
+        scrollX: 0,
+        scrollY: 0
+    });
+    document.body.removeChild(exportNode);
+    return canvas;
+}
+
+// Share image via Web Share API with files, with graceful fallback
+async function shareResultWithImage(name1, name2, result, message) {
+    try {
+        const iconEl = document.querySelector('.result .result-icon');
+        const resultIcon = iconEl ? iconEl.textContent.trim() : '✨';
+        const canvas = await createExportCanvas(name1, name2, result, resultIcon);
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+        if (!blob) throw new Error('Failed to create image blob');
+        const fileName = `flames-result-${name1}-${name2}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: `FLAMES Result: ${result}`,
+                text: `${name1} & ${name2} - ${result}\n\n${message}`
+            });
+            showShareFeedback('📤 Shared image successfully!', 'success');
+        } else {
+            // Fallback to text-only sharing
+            await shareResult(name1, name2, result, message);
+        }
+    } catch (error) {
+        console.error('Image sharing failed, falling back to text share:', error);
+        await shareResult(name1, name2, result, message);
     }
 }
 

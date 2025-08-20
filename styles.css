@@ -497,7 +497,7 @@ input[type="text"]::placeholder {
     border: 2px solid #ed969e;
 }
 
-.result.sister { 
+.result.sibling { 
     background: linear-gradient(135deg, #e7f3ff 0%, #d1e7ff 100%); 
     color: #0a3d91; 
     border: 2px solid #90caf9;
@@ -1039,7 +1039,7 @@ input[type="text"]::placeholder {
     }
 }
 
-/* Sister - Family Hearts */
+/* Sibling - Family Hearts */
 .family-heart {
     position: absolute;
     color: #ff9800;
@@ -1486,7 +1486,7 @@ input[type="text"]::placeholder {
     color: #5a161c;
     border: 2px solid #ed969e;
 }
-.export-wrap.export-sister .export-card { 
+.export-wrap.export-sibling .export-card { 
     background: linear-gradient(135deg, #e7f3ff 0%, #d1e7ff 100%);
     color: #0a3d91;
     border: 2px solid #90caf9;
@@ -1518,7 +1518,7 @@ input[type="text"]::placeholder {
 .export-wrap.export-affection .export-underline { background: #6a1b8c; }
 .export-wrap.export-marriage .export-underline { background: #6b5003; }
 .export-wrap.export-enemy .export-underline { background: #5a161c; }
-.export-wrap.export-sister .export-underline { background: #0a3d91; }
+.export-wrap.export-sibling .export-underline { background: #0a3d91; }
 
 .export-names {
     display: flex;
