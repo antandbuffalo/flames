@@ -630,9 +630,8 @@ input[type="text"]::placeholder {
     color: #9c27b0;
 }
 
-/* History and Suggestions Sections */
-.history-section,
-.suggestions-section {
+/* History Section */
+.history-section {
     margin-top: 25px;
     padding: 20px;
     background: rgba(255, 255, 255, 0.8);
@@ -641,8 +640,7 @@ input[type="text"]::placeholder {
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.history-section h4,
-.suggestions-section h4 {
+.history-section h4 {
     color: #555;
     font-size: 16px;
     font-weight: 600;
@@ -685,31 +683,7 @@ input[type="text"]::placeholder {
     font-weight: 400;
 }
 
-.name-suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
 
-.suggestion-btn {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    color: #555;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.suggestion-btn:hover {
-    background: rgba(255, 107, 107, 0.1);
-    border-color: rgba(255, 107, 107, 0.3);
-    color: #ff6b6b;
-    transform: translateY(-1px);
-}
 
 .steps {
     display: none; /* Hide steps for clean look initially */
@@ -1431,14 +1405,12 @@ input[type="text"]::placeholder {
         min-width: 80px;
     }
     
-    .history-section,
-    .suggestions-section {
+    .history-section {
         margin-top: 20px;
         padding: 15px;
     }
     
-    .history-section h4,
-    .suggestions-section h4 {
+    .history-section h4 {
         font-size: 15px;
         margin-bottom: 12px;
     }
@@ -1453,11 +1425,6 @@ input[type="text"]::placeholder {
     
     .history-result {
         font-size: 13px;
-    }
-    
-    .suggestion-btn {
-        font-size: 12px;
-        padding: 6px 10px;
     }
 
     .step {

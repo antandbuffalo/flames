@@ -1237,32 +1237,10 @@ function addHistorySection(resultDiv) {
         resultDiv.appendChild(historySection);
     }
     
-    // Add name suggestions
-    const suggestionsSection = document.createElement('div');
-    suggestionsSection.className = 'suggestions-section';
-    suggestionsSection.innerHTML = `
-        <h4>Try Popular Names</h4>
-        <div class="name-suggestions">
-            ${getPopularNamePairs().map(pair => `
-                <button class="suggestion-btn" onclick="tryAgainWithNames('${pair[0]}', '${pair[1]}')">
-                    ${pair[0]} & ${pair[1]}
-                </button>
-            `).join('')}
-        </div>
-    `;
-    
-    resultDiv.appendChild(suggestionsSection);
+
 }
 
-function getPopularNamePairs() {
-    return [
-        ['Alex', 'Taylor'],
-        ['Sam', 'Jordan'],
-        ['Casey', 'Morgan'],
-        ['Riley', 'Avery'],
-        ['Blake', 'Quinn']
-    ];
-}
+
 
 function tryAgainWithNames(name1, name2) {
     audioManager.playButtonClick();
